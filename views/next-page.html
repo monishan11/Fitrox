@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Additional Information</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/next-page.css"> <!-- Optional styling -->
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1>Tell us more about you</h1>
+            <form>
+                <div class="input-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" required>
+                </div>
+                <div class="input-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" required>
+                        <option value="" disabled selected>Select your gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="height">Height (in cm)</label>
+                    <input type="number" id="height" required>
+                </div>
+                <div class="input-group">
+                    <label for="weight">Weight (in kg)</label>
+                    <input type="number" id="weight" required>
+                </div>
+                <button type="submit">Save and Continue</button>
+                <div id="error-message" style="color: red;" role="alert"></div>
+            </form>
+        </div>
+    </div>
+</body>
+
+<script>
+    const age = document.getElementById("age");
+    const gender = document.getElementById("gender");
+    const height = document.getElementById("height");
+    const weight = document.getElementById("weight");
+    const errorMessage = document.getElementById("error-message");
+
+    document.querySelector("button").addEventListener("click", async (e) => {
+        e.preventDefault();
+        errorMessage.textContent = ""; // Clear any previous error messages
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            errorMessage.textContent = "Unauthorized access. Please login again.";
+            return;
+        }
+
+        try {
+            const response = await fetch("/save-data", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    age: age.value,
+                    gender: gender.value,
+                    height: height.value,
+                    weight: weight.value
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.status !== 200) {
+                errorMessage.textContent = result.message || "An error occurred. Please try again.";
+            } else {
+                // Redirect to dashboard or next page after successful save
+                window.location.href = "/dashboard";
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            errorMessage.textContent = "An unexpected error occurred. Please try again later.";
+        }
+    });
+</script>
+</html>

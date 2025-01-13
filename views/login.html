@@ -34,31 +34,35 @@
     const errorMessage = document.getElementById('error-message');
 
     document.querySelector("button").addEventListener("click", async (e) => {
-        e.preventDefault();
-        errorMessage.textContent = ""; // Clear any previous error messages
-
-        try {
-            const resp = await fetch("/login", {
-                method: "POST",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: email.value, password: password.value })
+    e.preventDefault();
+    try {
+        const resp = await fetch("/login", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email.value, password: password.value })
+        });
+        const res = await resp.json();
+        if (resp.status === 200) {
+            localStorage.setItem('token', res.token);
+            const profileResp = await fetch('/check-fields', {
+                method: "GET",
+                headers: { 'Authorization': `Bearer ${res.token}` }
             });
+            const profileData = await profileResp.json();
 
-            const res = await resp.json();
-
-            if (resp.status !== 200) {
-                errorMessage.textContent = res.message; // Show error message
-            } else {
-                errorMessage.textContent = ""; // Clear error message on success
+            if (profileData.missingFields?.length > 0) {
                 window.location.href = "/init-frame1";
+            } else {
+                window.location.href = "/dashboard";
             }
-        } catch (err) {
-            console.error("Error:", err);
-            errorMessage.textContent = "An unexpected error occurred. Please try again later.";
+        } else {
+            errorMessage.textContent = res.message;
         }
-    });
+    } catch (err) {
+        console.error("Login error:", err);
+        errorMessage.textContent = "An error occurred. Please try again.";
+    }
+});
+
 </script>
 </html>
