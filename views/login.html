@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="login-form">
+            <h1>Welcome to FitRox   👋</h1>
+            <form>
+                <div class="input-group">
+                    <input type="email" id="email" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                </div>
+                <div id="error-message" style="color: red;" role="alert"></div>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="/register">Sign up</a></p>
+        </div>
+    </div>
+</body>
+
+<script>
+    const email = document.querySelector("#email");
+    const password = document.querySelector("#password");
+    const errorMessage = document.getElementById('error-message');
+
+    document.querySelector("button").addEventListener("click", async (e) => {
+        e.preventDefault();
+        errorMessage.textContent = ""; // Clear any previous error messages
+
+        try {
+            const resp = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email.value, password: password.value })
+            });
+
+            const res = await resp.json();
+
+            if (resp.status !== 200) {
+                errorMessage.textContent = res.message; // Show error message
+            } else {
+                errorMessage.textContent = ""; // Clear error message on success
+                window.location.href = "/init-frame1";
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            errorMessage.textContent = "An unexpected error occurred. Please try again later.";
+        }
+    });
+</script>
+</html>
