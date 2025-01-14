@@ -26,28 +26,33 @@ const userSchema = new mongoose.Schema({
     },
     selectedGoal: {
         type: String,
-        required: true,
+        required: false,
         default: null
     },
     gender: {
         type: String,
-        required: true,
+        required: false,
         default: null
     },
     age: {
         type: Number,
-        required: true,
+        required: false,
         default: null
     },
     height: {
         type: Number,
-        required: true,
+        required: false,
         default: null
     },
     weight: {
         type: Number,
-        required: true,
+        required: false,
         default: null
+    },
+    day: {
+        type: Number,
+        required: false,
+        default: 0
     }
 
 });

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, rgba(245, 166, 35, 0.8), rgba(255, 87, 34, 0.8));
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: orange;
+        }
+
+        #profile {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        #profile h2 {
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #profile-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        #profile-details p {
+            font-size: 16px;
+            margin: 5px 0;
+            font-weight: 500;
+        }
+
+        #profile-details p strong {
+            color: orange;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        #profile-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px auto;
+            height: 50vh; /* Half the vertical height */
+        }
+
+        #profile-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            #profile-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="profile">
+        <h2>Your Profile</h2>
+        <div id="profile-details">
+            <!-- User details will be dynamically inserted here -->
+        </div>
+        <button class="btn btn-primary">Edit Profile</button>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const profileDetails = document.getElementById("profile-details");
+
+            try {
+                // Fetch user details from the backend
+                const response = await fetch('/get-user-details', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`, // Include JWT token
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch user details: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log("User details retrieved:", data);
+
+                const { userDetails } = data;
+
+                // Populate the profile section with user data
+                profileDetails.innerHTML = `
+                    <p><strong>First Name:</strong> ${userDetails.f_name}</p>
+                    <p><strong>Last Name:</strong> ${userDetails.l_name || "-"}</p>
+                    <p><strong>Email:</strong> ${userDetails.email}</p>
+                    <p><strong>Age:</strong> ${userDetails.age || "-"}</p>
+                    <p><strong>Gender:</strong> ${userDetails.gender || "-"}</p>
+                    <p><strong>Height:</strong> ${userDetails.height || "-"} cm</p>
+                    <p><strong>Weight:</strong> ${userDetails.weight || "-"} kg</p>
+                    <p><strong>Selected Goal:</strong> ${userDetails.selectedGoal || "-"}</p>
+                `;
+            } catch (err) {
+                console.error("Error fetching user details:", err);
+                profileDetails.innerHTML = `<p class="error">Failed to load profile details. Please try again later.</p>`;
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

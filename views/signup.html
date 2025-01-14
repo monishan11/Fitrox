@@ -39,26 +39,49 @@
     </div>
 </body>
 
+
 <script>
-    const f_name = document.querySelector("#name")
-    const l_name = document.querySelector("#lastName")
-    const mobile = document.querySelector("#mobile")
-    const email = document.querySelector("#email")
-    const password = document.querySelector("#password")
+    const f_name = document.querySelector("#name");
+    const l_name = document.querySelector("#lastName");
+    const mobile = document.querySelector("#mobile");
+    const email = document.querySelector("#email");
+    const password = document.querySelector("#password");
+    const errorMessage = document.querySelector("#error-message");
 
     document.querySelector("button").addEventListener("click", async (e) => {
-        e.preventDefault()
-        const resp = await fetch("/register", {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ f_name: f_name.value, l_name: l_name.value, mobile: mobile.value, email: email.value, password: password.value })
-        })
-        const res = await resp.json()
-        window.location.href = "/redirect"
+        e.preventDefault();
+        errorMessage.textContent = ""; // Clear previous error messages
 
-    })
+        try {
+            const resp = await fetch("/register", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    f_name: f_name.value, 
+                    l_name: l_name.value, 
+                    mobile: mobile.value, 
+                    email: email.value, 
+                    password: password.value 
+                })
+            });
 
+            if (resp.ok) {
+                // If successful, redirect to another page
+                window.location.href = "/redirect";
+            } else if (resp.status === 409) {
+                // Email already exists
+                const errorData = await resp.json();
+                errorMessage.textContent = "An user with this email already found";
+            } else {
+                // Handle other errors
+                errorMessage.textContent = resp.status," : An unexpected error occured";
+            }
+        } catch (error) {
+            // Handle network or other unexpected errors
+            errorMessage.textContent = "Failed to connect to the server. Please try again.";
+        }
+    });
 </script>

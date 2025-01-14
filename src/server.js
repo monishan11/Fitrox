@@ -3,19 +3,17 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = "J^~4b!8L_.AW-sgH7y3vZ+TpR!cNwE2p";
-const path = require("path")
+const path = require("path");
 const app = express();
 const port = 3000;
 
 const User = require('../model/user');
 
-
 app.use(express.json()); // For parsing JSON data
 app.use(express.urlencoded({ extended: true }));
-app.use("/css",express.static(__dirname+"/css"))
-app.use("/img",express.static(__dirname+"/img"))
+app.use("/css", express.static(__dirname + "/css"));
+app.use("/img", express.static(__dirname + "/img"));
 console.log(__dirname);
-
 
 // MongoDB connection
 const mongoURI = 'mongodb+srv://admin:admin@users.hj0kt.mongodb.net/?retryWrites=true&w=majority&appName=users'; 
@@ -26,6 +24,7 @@ const conn = mongoose.connection;
 
 // Middleware
 app.use(bodyParser.json());
+
 // Middleware for JWT verification
 function verifyToken(req, res, next) {
     const token = req.headers.authorization?.split(" ")[1];
@@ -41,36 +40,34 @@ function verifyToken(req, res, next) {
     }
 }
 
+// Routes
+app.get("/", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "login.html"));
+});
 
-app.get("/",(req,res) => {
-    res.sendFile(path.join(path.resolve(),"views","login.html"))
-})
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await User.findOne({email:email});
-        if(!user){
-            return res.status(400).json({message:"No user found with this email."});
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(400).json({ message: "No user found with this email." });
         }
 
         console.log("User found:", user);
 
-        if(user.password !== password){
-            return res.status(400).json({message:"Invalid password."});
-            
+        if (user.password !== password) {
+            return res.status(400).json({ message: "Invalid password." });
         }
+
         const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ message: "Login successful", token, user });
 
-    } 
-    catch (err) {
+    } catch (err) {
         console.log("Error during login:", err);
-        res.status(500).json({ message: 'Server Error'});
+        res.status(500).json({ message: 'Server Error' });
     }
 });
 
-
-// Check User Fields Route
 app.get('/check-fields', verifyToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -88,8 +85,6 @@ app.get('/check-fields', verifyToken, async (req, res) => {
     }
 });
 
-
-// Save Additional Data
 app.post('/save-data', verifyToken, async (req, res) => {
     const { age, gender, height, weight, selectedGoal } = req.body;
     try {
@@ -101,37 +96,93 @@ app.post('/save-data', verifyToken, async (req, res) => {
 });
 
 
-app.get("/register", (req,res) => {
-    res.sendFile(path.join(path.resolve(),"views","signup.html"))
-})
+//Fetching user details for profile icon
+app.get('/get-user-details', verifyToken, async (req, res) => {
+    try {
+        // Fetch the user details from the database
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Prepare user details to return
+        const userDetails = {
+            email: user.email,
+            f_name: user.f_name,
+            l_name: user.l_name,
+            age: user.age,
+            gender: user.gender,
+            height: user.height,
+            weight: user.weight,
+            selectedGoal: user.selectedGoal,
+        };
+
+        res.status(200).json({ message: "User details retrieved successfully", userDetails });
+    } catch (err) {
+        console.error("Error fetching user details:", err);
+        res.status(500).json({ message: "Server error", error: err.message });
+    }
+});
+
+
+app.get("/register", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "signup.html"));
+});
+
 app.post('/register', async (req, res) => {
     const { f_name, l_name, mobile, email, password } = req.body;
-   
+
     try {
+        // Check if the email already exists
+        const existingUser = await User.findOne({ email: email });
+        console.log("Existing user:", existingUser);
+        if (existingUser) {
+            return res.status(409).json({ message: "An user with this email already found" });
+        }
+
+        // Create a new user
         const user = new User({ f_name, l_name, mobile, email, password });
         await user.save();
-        console.log("user created");
-        res.status(201).json({message:'User registered successfully'});
+        console.log("User created");
+        res.status(201).json({ message: 'User registered successfully' });
 
     } catch (err) {
+        console.error(err);
         res.status(500).send({ message: 'Error registering user', error: err.message });
     }
 });
-app.get("/redirect",(req,res) => {
-    res.sendFile(path.join(path.resolve(),"views","login.html"))
-})
+
+app.get("/redirect", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "login.html"));
+});
+
+app.get("/init-frame1", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "init-frame1.html"));
+});
+
+app.get("/init-frame2", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "init-frame2.html"));
+});
+
+app.get("/dashboard", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "dashboard.html"));
+});
+
+app.get("/profile", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "profile.html"));
+});
+
+app.get("/logout", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "login.html"));
+});
+
+app.get("/workouts", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "workouts.html"));
+});
 
 
-app.get("/init-frame1",(req,res) => {
-    res.sendFile(path.join(path.resolve(),"views","init-frame1.html"))
-})
 
-app.get("/next-page",(req,res) => {
-    res.sendFile(path.join(path.resolve(),"views","next-page.html"))
-})
-
-
+// Start server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
-  });
-
+});
