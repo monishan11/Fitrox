@@ -15,6 +15,13 @@ app.use("/css", express.static(__dirname + "/css"));
 app.use("/img", express.static(__dirname + "/img"));
 console.log(__dirname);
 
+app.use(express.static('public'));
+
+app.get('/admin_meals', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin_meals.html'));
+  });
+
+
 // MongoDB connection
 const mongoURI = 'mongodb+srv://admin:admin@users.hj0kt.mongodb.net/?retryWrites=true&w=majority&appName=users'; 
 mongoose.connect(mongoURI)
@@ -23,6 +30,7 @@ mongoose.connect(mongoURI)
 const conn = mongoose.connection;
 
 // Middleware
+//app.use(cors());
 app.use(bodyParser.json());
 
 // Middleware for JWT verification
@@ -180,7 +188,54 @@ app.get("/workouts", (req, res) => {
     res.sendFile(path.join(path.resolve(), "views", "workouts.html"));
 });
 
+app.get('/get-day', verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({ 
+            day: user.day || 0, 
+            month: user.month || 1 
+        });
+    } catch (err) {
+        console.error("Error retrieving day and month:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
+app.post('/update-day', verifyToken, async (req, res) => {
+    try {
+        const { day, month } = req.body; // Receive day and month
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Update the user's day and month
+        user.day = day;
+        user.month = month;
+
+        await user.save();
+
+        res.status(200).json({ message: 'Day and month updated successfully' });
+    } catch (err) {
+        console.error('Error updating day and month:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.get("/support-center", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "support-center.html"));
+});
+
+app.get("/foods", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "foods.html"));
+});
+
+app.get("/tutorials", (req, res) => {
+    res.sendFile(path.join(path.resolve(), "views", "tutorials.html"));
+});
 
 // Start server
 app.listen(port, () => {

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tutorials</title>
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding-bottom: 80px; /* Add extra space to prevent footer covering content */
+        }
+
+        header {
+            background-color: #ff5722;
+            width: 100%;
+            padding: 20px;
+            color: white;
+            font-size: 2em;
+        }
+
+        .tutorial-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 30px;
+            max-width: 2000px;
+            margin-top: 50px;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .tutorial-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .tutorial-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .tutorial-card h3 {
+            font-size: 1.4em;
+            color: #ff5722;
+            padding: 10px 0;
+        }
+
+        .tutorial-card p {
+            padding: 0 15px;
+            color: #666;
+        }
+
+        footer {
+            width: 100%;
+            height: 20px;
+            padding: 10px;
+            background: orangered;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000; /* Make sure footer is on top */
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-left: 550px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        .social-icons a:hover {
+            color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Fitness Tutorials
+</header>
+
+<div class="tutorial-container">
+    <!-- Squat Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="squat.jpg" alt="Squats">
+        <h3>Squats</h3>
+        <p>Learn how to perform squats for better leg strength and mobility.</p>
+    </div>
+
+    <!-- Push-ups Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="pushups.jpg" alt="Push-ups">
+        <h3>Push-ups</h3>
+        <p>Perfect your push-up form for upper body strength.</p>
+    </div>
+
+    <!-- Lunges Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="lunges.jpg" alt="Lunges">
+        <h3>Lunges</h3>
+        <p>Improve balance and coordination with lunges.</p>
+    </div>
+
+    <!-- Plank Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="plank.jpg" alt="Plank">
+        <h3>Plank</h3>
+        <p>Strengthen your core with proper plank form.</p>
+    </div>
+
+    <!-- Deadlift Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="deadlift.jpg" alt="Deadlift">
+        <h3>Deadlifts</h3>
+        <p>Build full-body strength with correct deadlift technique.</p>
+    </div>
+
+    <!-- Burpees Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="burpees.jpg" alt="Burpees">
+        <h3>Burpees</h3>
+        <p>Boost cardiovascular fitness with burpees.</p>
+    </div>
+
+    <!-- Mountain Climbers Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="mountain-climbers.jpg" alt="Mountain Climbers">
+        <h3>Mountain Climbers</h3>
+        <p>Enhance agility and endurance with mountain climbers.</p>
+    </div>
+
+    <!-- Jumping Jacks Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="jumping-jacks.jpg" alt="Jumping Jacks">
+        <h3>Jumping Jacks</h3>
+        <p>Get your heart rate up with jumping jacks.</p>
+    </div>
+
+    <!-- Bicycle Crunches Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="bicycle-crunches.jpg" alt="Bicycle Crunches">
+        <h3>Bicycle Crunches</h3>
+        <p>Activate your core with bicycle crunches.</p>
+    </div>
+
+    <!-- Leg Raises Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="leg-raises.jpg" alt="Leg Raises">
+        <h3>Leg Raises</h3>
+        <p>Strengthen your lower abs with leg raises.</p>
+    </div>
+
+    <!-- Russian Twists Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="russian-twists.jpg" alt="Russian Twists">
+        <h3>Russian Twists</h3>
+        <p>Target your obliques with Russian twists.</p>
+    </div>
+
+    <!-- Tricep Dips Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="tricep-dips.jpg" alt="Tricep Dips">
+        <h3>Tricep Dips</h3>
+        <p>Tone your arms with tricep dips.</p>
+    </div>
+
+    <!-- Chest Press Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="chest-press.jpg" alt="Chest Press">
+        <h3>Chest Press</h3>
+        <p>Build chest strength with the chest press exercise.</p>
+    </div>
+
+    <!-- Dumbbell Rows Tutorial Card -->
+    <div class="tutorial-card">
+        <img src="dumbbell-rows.jpg" alt="Dumbbell Rows">
+        <h3>Dumbbell Rows</h3>
+        <p>Strengthen your back with dumbbell rows.</p>
+    </div>
+
+</div>
+
+<footer>
+    <div class="footer-content">
+        <p>&copy; 2025 Your Company. All Rights Reserved.</p>
+        <div class="social-icons">
+            <a href="https://www.facebook.com" class="icons" target="_blank">
+                <i class='bx bxl-facebook'></i>
+            </a>
+            <a href="https://www.instagram.com" class="icons" target="_blank">
+                <i class='bx bxl-instagram'></i>
+            </a>
+            <a href="https://twitter.com" class="icons" target="_blank">
+                <i class='bx bxl-twitter'></i>
+            </a>
+        </div>
+        
+    </div>
+</footer>
+
+</body>
+</html>

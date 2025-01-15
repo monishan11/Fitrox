@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+    <title>Support Center</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a76, #ff6f61);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 80%;
+            height: 70%;
+            max-width: 1200px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .chatbot-section, .feedback-section {
+            width: 50%;
+            padding: 20px;
+        }
+
+        .chatbot-section {
+            background: #ffe0b2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .chatbot-section iframe {
+            width: 100%;
+            height: 80%;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chatbot-section p {
+            color: #ff5722;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .feedback-section h2 {
+            margin-bottom: 20px;
+            color: #ff5722;
+        }
+
+        .feedback-section form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 90%;
+            height: 100%;
+        }
+
+        .feedback-section input, .feedback-section textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+        }
+
+        .feedback-section textarea {
+            height: 150px;
+        }
+
+        .feedback-section input:focus, .feedback-section textarea:focus {
+            border-color: #ff9800;
+            outline: none;
+        }
+
+        .feedback-section button {
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .feedback-section button:hover {
+            background-color: #e64a19;
+        }
+
+        footer {
+            width: 100%;
+            height: 5%;
+            padding: 10px;
+            background: orangered;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-left: 550px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        .social-icons a:hover {
+            color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="chatbot-section">
+        <iframe src="https://copilotstudio.microsoft.com/environments/Default-6b8b8296-bdff-4ad8-93ad-84bcbf3842f5/bots/cr88c_safeTravelsCopilot/webchat?__version__=2"></iframe>
+        <p>Chat with our support bot for instant assistance!</p>
+    </div>
+
+    <div class="feedback-section">
+        <h2>Submit Your Feedback or Queries</h2>
+        <form id="feedbackForm">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea rows="5" placeholder="Your Feedback or Query" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-content">
+        <p>&copy; 2025 Your Company. All Rights Reserved.</p>
+        <div class="social-icons">
+            <a href="https://www.facebook.com" class="icons" target="_blank">
+                <i class='bx bxl-facebook'></i>
+            </a>
+            <a href="https://www.instagram.com" class="icons" target="_blank">
+                <i class='bx bxl-instagram'></i>
+            </a>
+            <a href="https://twitter.com" class="icons" target="_blank">
+                <i class='bx bxl-twitter'></i>
+            </a>
+        </div>
+        
+    </div>
+</footer>
+
+<script>
+    document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Thank you for your feedback!');
+    });
+</script>
+
+</body>
+</html>
