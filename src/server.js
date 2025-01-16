@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = "J^~4b!8L_.AW-sgH7y3vZ+TpR!cNwE2p";
 const path = require("path");
 const app = express();
+const router = express.Router();
 const port = 3000;
 
 const User = require('../model/user');
@@ -188,6 +189,8 @@ app.get("/workouts", (req, res) => {
     res.sendFile(path.join(path.resolve(), "views", "workouts.html"));
 });
 
+
+// WORKOUTS.HTML CODE
 app.get('/get-day', verifyToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -224,6 +227,58 @@ app.post('/update-day', verifyToken, async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+// MongoDB collections for each goal
+const bodyBuildingCollection = mongoose.model('BodyBuilding', new mongoose.Schema({}, { strict: false }));
+const flexibilityCollection = mongoose.model('Flexibility', new mongoose.Schema({}, { strict: false }));
+const enduranceCollection = mongoose.model('Endurance', new mongoose.Schema({}, { strict: false }));
+const weightLossCollection = mongoose.model('WeightLoss', new mongoose.Schema({}, { strict: false }));
+const leanMuscleCollection = mongoose.model('LeanMuscle', new mongoose.Schema({}, { strict: false }));
+const sportsTrainingCollection = mongoose.model('SportsTraining', new mongoose.Schema({}, { strict: false }));
+
+// Route to fetch workout data
+router.post('/fetch-workout', async (req, res) => {
+    const { goal, gender, day } = req.body;
+
+    let collection;
+    switch (goal) {
+        case 'body-building':
+            collection = bodyBuildingCollection;
+            break;
+        case 'flexibility':
+            collection = flexibilityCollection;
+            break;
+        case 'endurance':
+            collection = enduranceCollection;
+            break;
+        case 'weight-loss':
+            collection = weightLossCollection;
+            break;
+        case 'lean-muscle':
+            collection = leanMuscleCollection;
+            break;
+        case 'sports-training':
+            collection = sportsTrainingCollection;
+            break;
+        default:
+            return res.status(400).json({ error: 'Invalid goal' });
+    }
+
+    try {
+        const workout = await collection.findOne({ gender, day: `Day ${day}` });
+        if (workout) {
+            res.status(200).json(workout);
+        } else {
+            res.status(404).json({ message: 'Workout not found for the given parameters' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Server error', details: error.message });
+    }
+});
+
+module.exports = router;
+
+
 
 app.get("/support-center", (req, res) => {
     res.sendFile(path.join(path.resolve(), "views", "support-center.html"));
