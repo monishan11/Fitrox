@@ -91,7 +91,7 @@
     </div>
 
     <!-- Button for workout progress -->
-    <button id="moveButton">Chase Day 2</button>
+    <button id="moveButton" onclick="redirect()">Chase Day 2</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -100,6 +100,10 @@
         const totalSegments = 30;
         let day = 0; // Start at Day 0
         let month = 1; // Start at Month 1
+
+        function redirect(){
+            window.location.href="/chase";
+        }
 
         // Fetch the day and month from the database
         async function fetchDayFromDB() {
