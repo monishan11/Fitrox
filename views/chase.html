@@ -1,3 +1,106 @@
-<html>
-    <h1>Welcome to chase</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .workout-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        .muscle-group {
+            margin-bottom: 20px;
+        }
+        .exercise {
+            margin-left: 20px;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Workout Details</h1>
+    <div id="workout-container" class="workout-container">
+        <p id="loading-message">Loading workout details...</p>
+        <div id="workout-details" style="display: none;"></div>
+        <p id="error-message" class="error" style="display: none;"></p>
+    </div>
+
+    <script>
+        async function fetchWorkoutDetails() {
+            try {
+                // Fetch data from the server
+                console.log("Fetching workout details...");
+                const response = await fetch('/fetch-workout', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Use your token
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const data = await response.json();
+                console.log("Fetched data:", data);
+
+                // Check if workout details are available
+                if (!data.muscleGroups || data.muscleGroups.length === 0) {
+                    document.getElementById('error-message').textContent = "No workout details available.";
+                    document.getElementById('error-message').style.display = "block";
+                    return;
+                }
+
+                // Render workout details
+                const workoutDetailsContainer = document.getElementById('workout-details');
+                workoutDetailsContainer.innerHTML = ""; // Clear previous content
+                data.muscleGroups.forEach(group => {
+                    const muscleGroupDiv = document.createElement('div');
+                    muscleGroupDiv.className = 'muscle-group';
+                    muscleGroupDiv.innerHTML = `<h3>${group.muscleGroup}</h3>`;
+
+                    group.exercises.forEach(exercise => {
+                        const exerciseDiv = document.createElement('div');
+                        exerciseDiv.className = 'exercise';
+                        exerciseDiv.textContent = `${exercise.exercise} - ${exercise.sets} sets of ${exercise.reps}`;
+                        muscleGroupDiv.appendChild(exerciseDiv);
+                    });
+
+                    workoutDetailsContainer.appendChild(muscleGroupDiv);
+                });
+
+                // Display the workout details and hide the loading message
+                document.getElementById('loading-message').style.display = "none";
+                workoutDetailsContainer.style.display = "block";
+
+            } catch (error) {
+                console.error('Error fetching workout details:', error);
+                document.getElementById('error-message').textContent = "Failed to fetch workout details.";
+                document.getElementById('error-message').style.display = "block";
+                document.getElementById('loading-message').style.display = "none";
+            }
+        }
+
+        // Call the function to fetch and display the workout details
+        fetchWorkoutDetails();
+    </script>
+</body>
 </html>

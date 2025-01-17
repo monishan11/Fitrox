@@ -62,8 +62,6 @@ app.post('/login', async (req, res) => {
             return res.status(400).json({ message: "No user found with this email." });
         }
 
-        console.log("User found:", user);
-
         if (user.password !== password) {
             return res.status(400).json({ message: "Invalid password." });
         }
@@ -236,6 +234,61 @@ app.post('/update-day', verifyToken, async (req, res) => {
 
 
 //chase.html code
+
+app.get('/fetch-workout', verifyToken, async (req, res) => {
+    try {
+        // Step 1: Get user details
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const { selectedGoal, gender, age, day } = user;
+        if (!selectedGoal || !gender || !age || day === undefined) {
+            return res.status(400).json({ message: "Incomplete user profile" });
+        }
+
+        // Step 2: Match the goal to the collection
+        const collections = {
+            "Bodybuilding": "Bodybuilding",
+            "Endurance": "Endurance",
+            "Flexibility": "Flexibility",
+            "Lean Muscle": "Lean Muscle",
+            "Sports Training": "Sports Training",
+            "Weight Loss": "Weight Loss"
+        };
+
+        const collectionName = collections[selectedGoal];
+        if (!collectionName) {
+            return res.status(400).json({ message: "Invalid goal selected" });
+        }
+
+        // Step 3: Query the correct collection
+        const collection = mongoose.connection.collection(collectionName);
+        const workout = await collection.findOne({
+            gender: gender,
+            "age.min_age": { $lte: age },
+            "age.max_age": { $gte: age },
+            day: day
+        });
+
+        if (!workout) {
+            return res.status(404).json({ message: "No matching workout found" });
+        }
+
+        // Step 4: Return the muscle group details
+        res.status(200).json({
+            message: "Workout retrieved successfully",
+            muscleGroups: workout.musclegroups
+        });
+
+    } catch (err) {
+        console.error("Error fetching workout:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
 
 
 app.get("/support-center", (req, res) => {
