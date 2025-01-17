@@ -73,19 +73,20 @@
                 const workoutDetailsContainer = document.getElementById('workout-details');
                 workoutDetailsContainer.innerHTML = ""; // Clear previous content
                 data.muscleGroups.forEach(group => {
-                    const muscleGroupDiv = document.createElement('div');
-                    muscleGroupDiv.className = 'muscle-group';
-                    muscleGroupDiv.innerHTML = `<h3>${group.muscleGroup}</h3>`;
+                const muscleGroupDiv = document.createElement('div');
+                muscleGroupDiv.className = 'muscle-group';
+                muscleGroupDiv.innerHTML = `<h3>${group.muscleGroup}</h3>`; // `muscleGroup` is now populated correctly
 
-                    group.exercises.forEach(exercise => {
-                        const exerciseDiv = document.createElement('div');
-                        exerciseDiv.className = 'exercise';
-                        exerciseDiv.textContent = `${exercise.exercise} - ${exercise.sets} sets of ${exercise.reps}`;
-                        muscleGroupDiv.appendChild(exerciseDiv);
-                    });
-
-                    workoutDetailsContainer.appendChild(muscleGroupDiv);
+                group.exercises.forEach(exercise => {
+                    const exerciseDiv = document.createElement('div');
+                    exerciseDiv.className = 'exercise';
+                    exerciseDiv.textContent = `${exercise.exercise} - ${exercise.sets} sets of ${exercise.reps}`;
+                    muscleGroupDiv.appendChild(exerciseDiv);
                 });
+
+                workoutDetailsContainer.appendChild(muscleGroupDiv);
+            });
+
 
                 // Display the workout details and hide the loading message
                 document.getElementById('loading-message').style.display = "none";

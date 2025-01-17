@@ -243,12 +243,18 @@ app.get('/fetch-workout', verifyToken, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const { selectedGoal, gender, age, day } = user;
-        if (!selectedGoal || !gender || !age || day === undefined) {
+        const { selectedGoal, gender, age, day, month } = user;
+        if (!selectedGoal || !gender || !age || day === undefined || month === undefined) {
             return res.status(400).json({ message: "Incomplete user profile" });
         }
 
-        // Step 2: Match the goal to the collection
+        // Step 2: Calculate the global day
+        const globalDay = (month - 1) * 30 + day;
+        if (globalDay < 1 || globalDay > 100) {
+            return res.status(400).json({ message: "Invalid day or month combination" });
+        }
+
+        // Step 3: Match the goal to the collection
         const collections = {
             "Bodybuilding": "Bodybuilding",
             "Endurance": "Endurance",
@@ -263,23 +269,26 @@ app.get('/fetch-workout', verifyToken, async (req, res) => {
             return res.status(400).json({ message: "Invalid goal selected" });
         }
 
-        // Step 3: Query the correct collection
+        // Step 4: Query the correct collection
         const collection = mongoose.connection.collection(collectionName);
         const workout = await collection.findOne({
             gender: gender,
             "age.min_age": { $lte: age },
             "age.max_age": { $gte: age },
-            day: day
+            day: globalDay
         });
 
         if (!workout) {
             return res.status(404).json({ message: "No matching workout found" });
         }
 
-        // Step 4: Return the muscle group details
+        // Step 5: Return the muscle group details
         res.status(200).json({
             message: "Workout retrieved successfully",
-            muscleGroups: workout.musclegroups
+            muscleGroups: workout.musclegroups.map(group => ({
+                muscleGroup: group.musclegroup, // Map `muscle` to `muscleGroup`
+                exercises: group.exercises
+            }))
         });
 
     } catch (err) {
@@ -287,7 +296,6 @@ app.get('/fetch-workout', verifyToken, async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
-
 
 
 
