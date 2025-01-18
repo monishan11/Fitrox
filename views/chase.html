@@ -6,32 +6,107 @@
     <title>Workout Details</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background-color: #eef2f7;
+            color: #333;
+            line-height: 1.6;
         }
         h1 {
             text-align: center;
-            color: #333;
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-top: 20px;
         }
         .workout-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 20px auto;
             padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 12px;
             background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .muscle-group {
             margin-bottom: 20px;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .muscle-group:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .muscle-group h3 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 10px;
         }
         .exercise {
             margin-left: 20px;
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .exercise:before {
+            content: '• ';
+            color: #3498db;
+            font-weight: bold;
+        }
+        .mark-completed {
+            background-color: #2ecc71;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .mark-completed:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
         }
         .error {
-            color: red;
+            color: #e74c3c;
             text-align: center;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+        #loading-message {
+            text-align: center;
+            color: #888;
+            font-size: 1.2rem;
+        }
+        #progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            height: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        #progress-bar-fill {
+            height: 100%;
+            width: 0;
+            background-color: #3498db;
+            border-radius: 10px;
+        }
+        @media (max-width: 600px) {
+            .workout-container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .muscle-group h3 {
+                font-size: 1.2rem;
+            }
+            .exercise {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -41,17 +116,22 @@
         <p id="loading-message">Loading workout details...</p>
         <div id="workout-details" style="display: none;"></div>
         <p id="error-message" class="error" style="display: none;"></p>
+        <div id="progress-bar">
+            <div id="progress-bar-fill"></div>
+        </div>
     </div>
 
     <script>
+        let completedExercises = 0;
+        const totalExercises = 3; // Adjust as per the total number of exercises
+
         async function fetchWorkoutDetails() {
             try {
-                // Fetch data from the server
                 console.log("Fetching workout details...");
                 const response = await fetch('/fetch-workout', {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Use your token
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
 
@@ -62,36 +142,39 @@
                 const data = await response.json();
                 console.log("Fetched data:", data);
 
-                // Check if workout details are available
                 if (!data.muscleGroups || data.muscleGroups.length === 0) {
                     document.getElementById('error-message').textContent = "No workout details available.";
                     document.getElementById('error-message').style.display = "block";
                     return;
                 }
 
-                // Render workout details
                 const workoutDetailsContainer = document.getElementById('workout-details');
-                workoutDetailsContainer.innerHTML = ""; // Clear previous content
+                workoutDetailsContainer.innerHTML = "";
                 data.muscleGroups.forEach(group => {
-                const muscleGroupDiv = document.createElement('div');
-                muscleGroupDiv.className = 'muscle-group';
-                muscleGroupDiv.innerHTML = `<h3>${group.muscleGroup}</h3>`; // `muscleGroup` is now populated correctly
+                    const muscleGroupDiv = document.createElement('div');
+                    muscleGroupDiv.className = 'muscle-group';
+                    muscleGroupDiv.innerHTML = `<h3>${group.muscleGroup}</h3>`;
 
-                group.exercises.forEach(exercise => {
-                    const exerciseDiv = document.createElement('div');
-                    exerciseDiv.className = 'exercise';
-                    exerciseDiv.textContent = `${exercise.exercise} - ${exercise.sets} sets of ${exercise.reps}`;
-                    muscleGroupDiv.appendChild(exerciseDiv);
+                    group.exercises.forEach((exercise, index) => {
+                        const exerciseDiv = document.createElement('div');
+                        exerciseDiv.className = 'exercise';
+                        exerciseDiv.textContent = `${exercise.exercise} - ${exercise.sets} sets of ${exercise.reps}`;
+
+                        // Create the "Mark as Completed" button
+                        const button = document.createElement('button');
+                        button.className = 'mark-completed';
+                        button.textContent = 'Mark as Completed';
+                        button.onclick = () => markExerciseCompleted(button);
+                        exerciseDiv.appendChild(button);
+
+                        muscleGroupDiv.appendChild(exerciseDiv);
+                    });
+
+                    workoutDetailsContainer.appendChild(muscleGroupDiv);
                 });
 
-                workoutDetailsContainer.appendChild(muscleGroupDiv);
-            });
-
-
-                // Display the workout details and hide the loading message
                 document.getElementById('loading-message').style.display = "none";
                 workoutDetailsContainer.style.display = "block";
-
             } catch (error) {
                 console.error('Error fetching workout details:', error);
                 document.getElementById('error-message').textContent = "Failed to fetch workout details.";
@@ -100,7 +183,25 @@
             }
         }
 
-        // Call the function to fetch and display the workout details
+        function markExerciseCompleted(button) {
+            // Disable the button and mark the exercise as completed
+            button.disabled = true;
+            button.textContent = 'Completed';
+            completedExercises++;
+
+            // Show success notification
+            alert("Exercise completed successfully!");
+
+            // Update the progress bar
+            const progress = (completedExercises / totalExercises) * 100;
+            document.getElementById('progress-bar-fill').style.width = progress + '%';
+
+            // Check if all exercises are completed
+            if (completedExercises === totalExercises) {
+                alert("Congratulations! You've completed all exercises.");
+            }
+        }
+
         fetchWorkoutDetails();
     </script>
 </body>
